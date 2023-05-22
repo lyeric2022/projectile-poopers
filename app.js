@@ -243,7 +243,6 @@ var mySound;
 
         playerRef.set(players[playerId]);
         attemptGrabCoin(newX, newY);
-        myMusic.play();
       }
     }
 
@@ -266,14 +265,33 @@ var mySound;
     const gameContainer = document.querySelector(".game-container");
     const gameButtons = document.querySelector(".move-buttons");
 
+    const toggleMusicButton = document.querySelector("#toggle-music");
+
     toggleDeviceButton.addEventListener("click", () => {
+      toggleDeviceButton.classList.toggle("clicked");
+
       if (gameContainer.style.display === "none") {
         gameContainer.style.display = "block";
         gameButtons.style.display = "none";
+        toggleDeviceButton.textContent = "Console: OFF";
       } else {
         gameContainer.style.display = "none";
         gameButtons.style.display = "flex";
+        toggleDeviceButton.textContent = "Console: ON";
+      }
+    });
 
+    toggleMusicButton.addEventListener("click", () => {
+      toggleMusicButton.classList.toggle("clicked");
+
+      if (musicIsPlaying === false) {
+        musicIsPlaying = true;
+        myMusic.play();
+        toggleMusicButton.textContent = "Music: ON";
+      } else {
+        musicIsPlaying = false;
+        myMusic.pause();
+        toggleMusicButton.textContent = "Music: OFF";
       }
     });
     

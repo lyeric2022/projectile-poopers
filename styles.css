@@ -75,6 +75,18 @@ button:active {
   background: #fcff59;
 }
 
+#toggle-device.clicked {
+  background-color:  #59fcff;
+}
+
+#toggle-music {
+  background: #ffc259;
+}
+
+#toggle-music.clicked {
+    background-color:  #e959ff;
+}
+
 /* Characters */
 .grid-cell {
   position: absolute;
@@ -234,12 +246,15 @@ button:active {
   display: none;
   flex-direction: column;
   align-items: center;
+  transform: scale(3);
+
   /* width: 100px; */
 }
 
 .move-buttons button {
   width: 75px;
   height: 75px;
+  
 }
 
 #button-left {
