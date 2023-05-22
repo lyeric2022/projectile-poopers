@@ -1,0 +1,48 @@
+<html>
+
+<head>
+  <title>Multiplayer Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" type="text/css">
+</head>
+
+<body>
+
+  <div class="game-container">
+  </div>
+  <div class="player-info">
+    <div>
+      <label for="player-name">Your Name</label>
+      <input id="player-name" maxlength="10" type="text" />
+    </div>
+    <div>
+      <button id="player-color">Change Color</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script>
+    // NOTE - INCLUDE YOUR FIREBASE CONFIG HERE FOR ANYTHING TO WORK:
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZYon-OV7kX1Ne1B4sPfvfKUPrTExtc6o",
+      authDomain: "multiplayer-demo-db855.firebaseapp.com",
+      databaseURL: "https://multiplayer-demo-db855-default-rtdb.firebaseio.com",
+      projectId: "multiplayer-demo-db855",
+      storageBucket: "multiplayer-demo-db855.appspot.com",
+      messagingSenderId: "867085062649",
+      appId: "1:867085062649:web:a289fd82dfa4bc49dead28",
+      measurementId: "G-LBTHXJDBXK"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+
+  <script src="/KeyPressListener.js"></script>
+  <script src="/app.js"></script>
+</body>
+
+</html>
