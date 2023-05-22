@@ -101,7 +101,7 @@ button:active {
   background: url(/images/characters.png);
 }
 .Character[data-direction="right"] .Character_sprite {
-  background-position-x: 16px;
+  background-position-x: 80px;
 }
 .Character[data-color="red"] .Character_sprite {
   background-position-y: -16px;
@@ -124,7 +124,7 @@ button:active {
 
 .Character_name-container {
   position: absolute;
-  top: -12px;
+  top: -13px;
   left: -5px;
   font-size: 5px;
   padding: 1px 2px 1px;
@@ -139,6 +139,10 @@ button:active {
   margin-left: 1px;
   color: gold;
 }
+.Character_health {
+  margin-right: 1px;
+  color: greenyellow;
+}
 
 /* Coins */
 .Coin_sprite {
@@ -151,4 +155,72 @@ button:active {
 }
 .Coin_shadow {
   background: url(/images/coin-shadow.png) no-repeat no-repeat;
+}
+
+/* Projectile */
+.Projectile {
+  /* transition: transform 0.4s; */
+}
+
+.Projectile_sprite {
+  overflow: hidden;
+  top: -3px;
+  background: url(/images/characters.png);
+  /* animation: coinFloat 0.8s linear infinite alternate-reverse; */
+}
+@keyframes projectileAnimateLeft {
+  from { transform: translateX(32px) }
+  to { transform: translateX(0px) }
+}
+.Projectile[data-direction="left"] .Projectile_sprite {
+  background-position-x: 48px;
+  animation: projectileAnimateLeft 0.3s;
+  
+}
+@keyframes projectileAnimateRight {
+  from { transform: translateX(-32px) }
+  to { transform: translateX(0px) }
+}
+.Projectile[data-direction="right"] .Projectile_sprite {
+  background-position-x: 16px;
+  animation: projectileAnimateRight 0.3s;
+
+}
+
+/* down */
+@keyframes projectileAnimateUp {
+  from { transform: translateY(-32px) }
+  to { transform: translateY(0px) }
+}
+.Projectile[data-direction="up"] .Projectile_sprite {
+  background-position-x: 32px;
+  animation: projectileAnimateUp 0.3s;
+}
+
+/* up */
+@keyframes projectileAnimateDown {
+  from { transform: translateY(32px) }
+  to { transform: translateY(0px) }
+}
+.Projectile[data-direction="down"] .Projectile_sprite {
+  background-position-x: 64px;
+  animation: projectileAnimateDown 0.3s;
+
+}
+
+
+.Projectile[data-color="red"] .Projectile_sprite {
+  background-position-y: -16px;
+}
+.Projectile[data-color="orange"] .Projectile_sprite {
+  background-position-y: -32px;
+}
+.Projectile[data-color="yellow"] .Projectile_sprite {
+  background-position-y: -48px;
+}
+.Projectile[data-color="green"] .Projectile_sprite {
+  background-position-y: -64px;
+}
+.Projectile[data-color="purple"] .Projectile_sprite {
+  background-position-y: -80px;
 }
