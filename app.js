@@ -155,11 +155,10 @@ function getRandomSafeSpot() {
       x,
       y,
       direction, // Set the direction in the Firebase database
-      // color =  players[playerId].projectileDirection
+      color: players[playerId].color,
     })
 
     const key = getKeyString(x, y);
-
 
     const projectileRefTimeout = 500;
     setTimeout(() => {
@@ -188,7 +187,21 @@ function getRandomSafeSpot() {
       // Remove this key from data, then uptick Player's coin count
       firebase.database().ref(`coins/${key}`).remove();
       playerRef.update({
-        coins: players[playerId].coins + 1,
+        coins:  players[playerId].coins + 1,
+      })
+    }
+  }
+
+  function playerAndProjectileCollision(x, y) {
+    // console.log(x + "   " + y);
+    // console.log(players);
+
+    const key = getKeyString(x, y);
+    if (projectiles[key]) {
+      // Remove this key from data, then uptick Player's coin count
+      firebase.database().ref(`projectiles/${key}`).remove();
+      playerRef.update({
+        health: players[playerId].health - 1,
       })
     }
   }
@@ -303,7 +316,6 @@ function getRandomSafeSpot() {
       delete playerElements[removedKey];
     })
 
-
     // New - not in the video!
     // This block will remove coins from local state when Firebase `coins` value updates
     allCoinsRef.on("value", (snapshot) => {
@@ -346,12 +358,20 @@ function getRandomSafeSpot() {
     // This block will remove projectiles from local state when Firebase `coins` value updates
     allProjectilesRef.on("value", (snapshot) => {
       projectiles = snapshot.val() || {};
+
+        const currentPlayer = players[playerId];
+        playerAndProjectileCollision(currentPlayer.x, currentPlayer.y);
+        if (currentPlayer.health <= 0) {
+          playerRef.remove();
+          firebase.database().ref(`coins/${key}`).remove();
+
+        }
     });
     //
 
     allProjectilesRef.on("child_added", (snapshot) => {
       const projectile = snapshot.val();
-      const key = getKeyString(projectile.x, projectile.y, projectile.direction);
+      const key = getKeyString(projectile.x, projectile.y, projectile.direction, projectile.color);
       projectiles[key] = true;
 
       // Create the DOM Element
@@ -363,7 +383,7 @@ function getRandomSafeSpot() {
 
       // Set the direction attribute in CSS
       projectileElement.setAttribute("data-direction", projectile.direction);
-      projectileElement.setAttribute("data-color", players[playerId].color);
+      projectileElement.setAttribute("data-color", projectile.color);
 
 
       // Position the Element
@@ -404,7 +424,7 @@ function getRandomSafeSpot() {
 
     // Place my first coin
     placeCoin();
-
+    
 
     // shootProjectile();
 
@@ -433,7 +453,7 @@ function getRandomSafeSpot() {
         x,
         y,
         coins: 0,
-        health: 5,
+        health: 25,
       })
 
       // Remove me from Firebase when I diconnect
