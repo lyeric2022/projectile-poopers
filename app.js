@@ -1,3 +1,4 @@
+
 const mapData = {
   minX: 1,
   maxX: 14,
@@ -251,16 +252,55 @@ var mySound;
 
   function initGame() {
 
-      new KeyPressListener("ArrowUp", () => handleArrowPress(0, -1));
-      new KeyPressListener("ArrowDown", () => handleArrowPress(0, 1));
-      new KeyPressListener("ArrowLeft", () => handleArrowPress(-1, 0));
-      new KeyPressListener("ArrowRight", () => handleArrowPress(1, 0));
-  
-      new KeyPressListener("KeyW", () => handleArrowPress(0, -1));
-      new KeyPressListener("KeyS", () => handleArrowPress(0, 1));
-      new KeyPressListener("KeyA", () => handleArrowPress(-1, 0));
-      new KeyPressListener("KeyD", () => handleArrowPress(1, 0));
-  
+    new KeyPressListener("ArrowUp", () => handleArrowPress(0, -1));
+    new KeyPressListener("ArrowDown", () => handleArrowPress(0, 1));
+    new KeyPressListener("ArrowLeft", () => handleArrowPress(-1, 0));
+    new KeyPressListener("ArrowRight", () => handleArrowPress(1, 0));
+
+    new KeyPressListener("KeyW", () => handleArrowPress(0, -1));
+    new KeyPressListener("KeyS", () => handleArrowPress(0, 1));
+    new KeyPressListener("KeyA", () => handleArrowPress(-1, 0));
+    new KeyPressListener("KeyD", () => handleArrowPress(1, 0));
+
+    const toggleDeviceButton = document.querySelector("#toggle-device");
+    const gameContainer = document.querySelector(".game-container");
+    const gameButtons = document.querySelector(".move-buttons");
+
+    toggleDeviceButton.addEventListener("click", () => {
+      if (gameContainer.style.display === "none") {
+        gameContainer.style.display = "block";
+        gameButtons.style.display = "none";
+      } else {
+        gameContainer.style.display = "none";
+        gameButtons.style.display = "flex";
+
+      }
+    });
+    
+    
+    // Add event listener for button-up
+    const buttonUp = document.querySelector("#button-up");
+    buttonUp.addEventListener("click", () => {
+      handleArrowPress(0, -1);
+    });
+
+    // Add event listener for button-left
+    const buttonLeft = document.querySelector("#button-left");
+    buttonLeft.addEventListener("click", () => {
+      handleArrowPress(-1, 0);
+    });
+
+    // Add event listener for button-down
+    const buttonDown = document.querySelector("#button-down");
+    buttonDown.addEventListener("click", () => {
+      handleArrowPress(0, 1);
+    });
+
+    // Add event listener for button-right
+    const buttonRight = document.querySelector("#button-right");
+    buttonRight.addEventListener("click", () => {
+      handleArrowPress(1, 0);
+    });
 
     const allPlayersRef = firebase.database().ref(`players`);
     const allCoinsRef = firebase.database().ref(`coins`);
@@ -381,9 +421,9 @@ var mySound;
         playerAndProjectileCollision(currentPlayer.x, currentPlayer.y);
         if (currentPlayer.health <= 0) {
           playerRef.remove();
-            // Unhide the "restart-game" button
-            const restartButton = document.getElementById("restart-game");
-            restartButton.style.display = "block";
+          // Unhide the "restart-game" button
+          const restartButton = document.getElementById("restart-game");
+          restartButton.style.display = "block";
         }
       }
     });
@@ -426,20 +466,24 @@ var mySound;
 
     // Updates player name with text input
     playerNameInput.addEventListener("change", (e) => {
-      const newName = e.target.value || createName();
-      playerNameInput.value = newName;
-      playerRef.update({
-        name: newName
-      })
+      if (typeof players[playerId] !== 'undefined') {
+        const newName = e.target.value || createName();
+        playerNameInput.value = newName;
+        playerRef.update({
+          name: newName
+        })
+      }
     })
 
     // Update player color on button click
     playerColorButton.addEventListener("click", () => {
-      const mySkinIndex = playerColors.indexOf(players[playerId].color);
-      const nextColor = playerColors[mySkinIndex + 1] || playerColors[0];
-      playerRef.update({
-        color: nextColor
-      })
+      if (typeof players[playerId] !== 'undefined') {
+        const mySkinIndex = playerColors.indexOf(players[playerId].color);
+        const nextColor = playerColors[mySkinIndex + 1] || playerColors[0];
+        playerRef.update({
+          color: nextColor
+        })
+      }
     })
 
     playerRestartButton.addEventListener("click", () => {

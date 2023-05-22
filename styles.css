@@ -71,6 +71,10 @@ button:active {
   top: 1px;
 }
 
+#toggle-device {
+  background: #fcff59;
+}
+
 /* Characters */
 .grid-cell {
   position: absolute;
@@ -223,4 +227,25 @@ button:active {
 }
 .Projectile[data-color="purple"] .Projectile_sprite {
   background-position-y: -80px;
+}
+
+/* Joy Stick */
+.move-buttons {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  /* width: 100px; */
+}
+
+.move-buttons button {
+  width: 75px;
+  height: 75px;
+}
+
+#button-left {
+  margin-right: 40px;
+}
+
+#button-right {
+  margin-left: 40px;
 }
