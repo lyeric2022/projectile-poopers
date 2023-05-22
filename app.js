@@ -539,7 +539,7 @@ var mySound;
         x,
         y,
         coins: 0,
-        health: 5,
+        health: 10,
       })
 
       // Remove me from Firebase when I diconnect
