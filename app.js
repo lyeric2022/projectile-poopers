@@ -111,6 +111,7 @@ function getRandomSafeSpot() {
   ]);
 }
 
+var mySound;
 
 (function () {
 
@@ -124,9 +125,15 @@ function getRandomSafeSpot() {
   let projectiles = {};
   let projectileElements = {};
 
+  let myMusic = new Audio("assets/game_music.mp3");
+  myMusic.volume = 0.2;
+  let musicIsPlaying = false;
+
   const gameContainer = document.querySelector(".game-container");
   const playerNameInput = document.querySelector("#player-name");
   const playerColorButton = document.querySelector("#player-color");
+  const playerRestartButton = document.querySelector("#restart-game");
+
 
   //////
   function shootProjectile(originalSpriteX, originalSpriteY, direction) {
@@ -187,7 +194,7 @@ function getRandomSafeSpot() {
       // Remove this key from data, then uptick Player's coin count
       firebase.database().ref(`coins/${key}`).remove();
       playerRef.update({
-        coins:  players[playerId].coins + 1,
+        coins: players[playerId].coins + 1,
       })
     }
   }
@@ -207,31 +214,36 @@ function getRandomSafeSpot() {
   }
 
   function handleArrowPress(xChange = 0, yChange = 0) {
-    const newX = players[playerId].x + xChange;
-    const newY = players[playerId].y + yChange;
-    if (!isSolid(newX, newY)) {
-      // move to the next space
-      if (xChange === 1) {
-        players[playerId].direction = "right";
-        players[playerId].projectileDirection = "left";
-      } else if (xChange === -1) {
-        players[playerId].direction = "left";
-        players[playerId].projectileDirection = "right";
-      } else if (yChange === -1) {
-        players[playerId].direction = "down";
-        players[playerId].projectileDirection = "up";
-      } else if (yChange === 1) {
-        players[playerId].direction = "up";
-        players[playerId].projectileDirection = "down";
+    console.log(players);
+
+    if (typeof players[playerId] !== 'undefined') {
+      const newX = players[playerId].x + xChange;
+      const newY = players[playerId].y + yChange;
+      if (!isSolid(newX, newY)) {
+        // move to the next space
+        if (xChange === 1) {
+          players[playerId].direction = "right";
+          players[playerId].projectileDirection = "left";
+        } else if (xChange === -1) {
+          players[playerId].direction = "left";
+          players[playerId].projectileDirection = "right";
+        } else if (yChange === -1) {
+          players[playerId].direction = "down";
+          players[playerId].projectileDirection = "up";
+        } else if (yChange === 1) {
+          players[playerId].direction = "up";
+          players[playerId].projectileDirection = "down";
+        }
+
+        shootProjectile(players[playerId].x, players[playerId].y, players[playerId].projectileDirection);
+
+        players[playerId].x = newX;
+        players[playerId].y = newY;
+
+        playerRef.set(players[playerId]);
+        attemptGrabCoin(newX, newY);
+        myMusic.play();
       }
-
-      shootProjectile(players[playerId].x, players[playerId].y, players[playerId].projectileDirection);
-
-      players[playerId].x = newX;
-      players[playerId].y = newY;
-
-      playerRef.set(players[playerId]);
-      attemptGrabCoin(newX, newY);
     }
 
 
@@ -239,15 +251,16 @@ function getRandomSafeSpot() {
 
   function initGame() {
 
-    new KeyPressListener("ArrowUp", () => handleArrowPress(0, -1));
-    new KeyPressListener("ArrowDown", () => handleArrowPress(0, 1))
-    new KeyPressListener("ArrowLeft", () => handleArrowPress(-1, 0))
-    new KeyPressListener("ArrowRight", () => handleArrowPress(1, 0))
-
-    new KeyPressListener("KeyW", () => handleArrowPress(0, -1));
-    new KeyPressListener("KeyS", () => handleArrowPress(0, 1))
-    new KeyPressListener("KeyA", () => handleArrowPress(-1, 0))
-    new KeyPressListener("KeyD", () => handleArrowPress(1, 0))
+      new KeyPressListener("ArrowUp", () => handleArrowPress(0, -1));
+      new KeyPressListener("ArrowDown", () => handleArrowPress(0, 1));
+      new KeyPressListener("ArrowLeft", () => handleArrowPress(-1, 0));
+      new KeyPressListener("ArrowRight", () => handleArrowPress(1, 0));
+  
+      new KeyPressListener("KeyW", () => handleArrowPress(0, -1));
+      new KeyPressListener("KeyS", () => handleArrowPress(0, 1));
+      new KeyPressListener("KeyA", () => handleArrowPress(-1, 0));
+      new KeyPressListener("KeyD", () => handleArrowPress(1, 0));
+  
 
     const allPlayersRef = firebase.database().ref(`players`);
     const allCoinsRef = firebase.database().ref(`coins`);
@@ -259,6 +272,10 @@ function getRandomSafeSpot() {
       Object.keys(players).forEach((key) => {
         const characterState = players[key];
         let el = playerElements[key];
+
+        // Update the player's health
+        el.querySelector(".Character_health").innerText = characterState.health;
+
         // Now update the DOM
         el.querySelector(".Character_health").innerText = characterState.health;
         el.querySelector(".Character_name").innerText = characterState.name;
@@ -359,13 +376,16 @@ function getRandomSafeSpot() {
     allProjectilesRef.on("value", (snapshot) => {
       projectiles = snapshot.val() || {};
 
-        const currentPlayer = players[playerId];
+      const currentPlayer = players[playerId];
+      if (typeof currentPlayer !== "undefined") {
         playerAndProjectileCollision(currentPlayer.x, currentPlayer.y);
         if (currentPlayer.health <= 0) {
           playerRef.remove();
-          firebase.database().ref(`coins/${key}`).remove();
-
+            // Unhide the "restart-game" button
+            const restartButton = document.getElementById("restart-game");
+            restartButton.style.display = "block";
         }
+      }
     });
     //
 
@@ -422,9 +442,13 @@ function getRandomSafeSpot() {
       })
     })
 
+    playerRestartButton.addEventListener("click", () => {
+      location.reload();
+    });
+
     // Place my first coin
     placeCoin();
-    
+
 
     // shootProjectile();
 
@@ -453,7 +477,7 @@ function getRandomSafeSpot() {
         x,
         y,
         coins: 0,
-        health: 25,
+        health: 5,
       })
 
       // Remove me from Firebase when I diconnect
