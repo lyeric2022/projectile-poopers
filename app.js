@@ -225,15 +225,16 @@ var mySound;
 
     const key = getKeyString(x, y);
     if (projectiles[key]) {
-      console.log(firebase.database().ref(`projectiles/${key}/owner`));
 
-      const dmg_value = projectiles[key].dmg;
+      const dmg_value = firebase.database().ref(`projectiles/${key}/dmg`);
+
+      console.log(dmg_value);
 
       // Remove this key from data, then uptick Player's coin count
       firebase.database().ref(`projectiles/${key}`).remove();
 
       playerRef.update({
-        health: players[playerId].health - dmg_value,
+        health: players[playerId].health - 1,
       });
     }
   }
@@ -276,15 +277,32 @@ var mySound;
 
   function initGame() {
 
-    new KeyPressListener("ArrowUp", () => handleArrowPress(0, -1));
-    new KeyPressListener("ArrowDown", () => handleArrowPress(0, 1));
-    new KeyPressListener("ArrowLeft", () => handleArrowPress(-1, 0));
-    new KeyPressListener("ArrowRight", () => handleArrowPress(1, 0));
-
-    new KeyPressListener("KeyW", () => handleArrowPress(0, -1));
-    new KeyPressListener("KeyS", () => handleArrowPress(0, 1));
-    new KeyPressListener("KeyA", () => handleArrowPress(-1, 0));
-    new KeyPressListener("KeyD", () => handleArrowPress(1, 0));
+    const arrowKeys = [
+      { key: "ArrowUp", action: () => handleArrowPress(0, -1) },
+      { key: "ArrowDown", action: () => handleArrowPress(0, 1) },
+      { key: "ArrowLeft", action: () => handleArrowPress(-1, 0) },
+      { key: "ArrowRight", action: () => handleArrowPress(1, 0) },
+      { key: "KeyW", action: () => handleArrowPress(0, -1) },
+      { key: "KeyS", action: () => handleArrowPress(0, 1) },
+      { key: "KeyA", action: () => handleArrowPress(-1, 0) },
+      { key: "KeyD", action: () => handleArrowPress(1, 0) }
+    ];
+    
+    for (const { key, action } of arrowKeys) {
+      new KeyPressListener(key, action);
+    }
+    
+    function addButtonClickListener(buttonId, dx, dy) {
+      const button = document.querySelector(buttonId);
+      button.addEventListener("click", () => {
+        handleArrowPress(dx, dy);
+      });
+    }
+    
+    addButtonClickListener("#button-up", 0, -1);
+    addButtonClickListener("#button-left", -1, 0);
+    addButtonClickListener("#button-down", 0, 1);
+    addButtonClickListener("#button-right", 1, 0);    
 
     const toggleDeviceButton = document.querySelector("#toggle-device");
     const gameContainer = document.querySelector(".game-container");
@@ -318,31 +336,6 @@ var mySound;
         myMusic.pause();
         toggleMusicButton.textContent = "Music: OFF";
       }
-    });
-
-
-    // Add event listener for button-up
-    const buttonUp = document.querySelector("#button-up");
-    buttonUp.addEventListener("click", () => {
-      handleArrowPress(0, -1);
-    });
-
-    // Add event listener for button-left
-    const buttonLeft = document.querySelector("#button-left");
-    buttonLeft.addEventListener("click", () => {
-      handleArrowPress(-1, 0);
-    });
-
-    // Add event listener for button-down
-    const buttonDown = document.querySelector("#button-down");
-    buttonDown.addEventListener("click", () => {
-      handleArrowPress(0, 1);
-    });
-
-    // Add event listener for button-right
-    const buttonRight = document.querySelector("#button-right");
-    buttonRight.addEventListener("click", () => {
-      handleArrowPress(1, 0);
     });
 
     const allPlayersRef = firebase.database().ref(`players`);
