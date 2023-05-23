@@ -1,5 +1,5 @@
 
-const mapData = {
+let mapData = {
   minX: 1,
   maxX: 14,
   minY: 4,
@@ -202,7 +202,20 @@ var mySound;
       playerRef.update({
         coins: players[playerId].coins + 1,
       })
+
+      if (checkPlayerWinViaCoins()) {
+        playerRef.update({
+          health: 999,
+        })
+      }
     }
+  }
+
+  function checkPlayerWinViaCoins() {
+    if (players[playerId].coins >= 100) {
+      return true;
+    }
+    else return false;
   }
 
   function playerAndProjectileCollision(x, y) {
@@ -215,7 +228,7 @@ var mySound;
       firebase.database().ref(`projectiles/${key}`).remove();
       playerRef.update({
         health: players[playerId].health - 1,
-      })
+      });
     }
   }
 
@@ -544,7 +557,7 @@ var mySound;
         x,
         y,
         coins: 0,
-        health: 25,
+        health: 10,
       })
 
       // Remove me from Firebase when I diconnect
