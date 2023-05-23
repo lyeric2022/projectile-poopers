@@ -258,7 +258,11 @@ button:active {
 .move-buttons button {
   width: 75px;
   height: 75px;
-  
+  border-bottom: 4px solid #1e830b;
+}
+.move-buttons button:active {
+  position: relative;
+  top: 2px;
 }
 
 #button-left {
