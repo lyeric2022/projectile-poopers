@@ -127,7 +127,11 @@ var mySound;
   let projectileElements = {};
 
   let myMusic = new Audio("assets/game_music.mp3");
-  myMusic.volume = 0.2;
+  let myCoinSound = new Audio("assets/coin_sound.mp3");
+
+  myMusic.volume = 0.1;
+  myCoinSound.volume = 0.1;
+
   let musicIsPlaying = false;
 
   const gameContainer = document.querySelector(".game-container");
@@ -194,6 +198,7 @@ var mySound;
     if (coins[key]) {
       // Remove this key from data, then uptick Player's coin count
       firebase.database().ref(`coins/${key}`).remove();
+      myCoinSound.play();
       playerRef.update({
         coins: players[playerId].coins + 1,
       })
