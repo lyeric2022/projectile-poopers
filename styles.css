@@ -96,9 +96,10 @@ button:active {
 }
 .Character {
   transition: transform 0.4s;
+  z-index: 1;
 }
 .Character.you {
-  z-index: 1;
+  z-index: 2;
 }
 .Character.you .Character_you-arrow {
   display: block;
@@ -142,7 +143,7 @@ button:active {
 .Character_name-container {
   position: absolute;
   top: -13px;
-  left: -5px;
+  left: -12px;
   font-size: 5px;
   padding: 1px 2px 1px;
   border-radius: 3px;
@@ -186,42 +187,44 @@ button:active {
   /* animation: coinFloat 0.8s linear infinite alternate-reverse; */
 }
 @keyframes projectileAnimateLeft {
-  from { transform: translateX(32px) }
-  to { transform: translateX(0px) }
+  0% { transform: translateX(32px); animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1); }
+  50% { transform: translateX(0px); animation-timing-function: cubic-bezier(0.1, 0.7, 0.9, 0.3); }
+  100% { transform: translateX(0px); animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1); }
 }
 .Projectile[data-direction="left"] .Projectile_sprite {
   background-position-x: 48px;
-  animation: projectileAnimateLeft 0.3s;
-  
+  animation: projectileAnimateLeft 1s ease-in-out;
 }
 @keyframes projectileAnimateRight {
-  from { transform: translateX(-32px) }
-  to { transform: translateX(0px) }
+  0% { transform: translateX(-32px); animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1); }
+  50% { transform: translateX(0px); animation-timing-function: cubic-bezier(0.1, 0.7, 0.9, 0.3); }
+  100% { transform: translateX(0px); animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1); }
 }
 .Projectile[data-direction="right"] .Projectile_sprite {
   background-position-x: 16px;
-  animation: projectileAnimateRight 0.3s;
-
+  animation: projectileAnimateRight 1s ease-in-out;
 }
 
 /* down */
 @keyframes projectileAnimateUp {
-  from { transform: translateY(-32px) }
-  to { transform: translateY(0px) }
+  0% { transform: translateY(-32px); animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1); }
+  50% { transform: translateY(0px); animation-timing-function: cubic-bezier(0.1, 0.7, 0.9, 0.3); }
+  100% { transform: translateY(0px); animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1); }
 }
 .Projectile[data-direction="up"] .Projectile_sprite {
   background-position-x: 32px;
-  animation: projectileAnimateUp 0.3s;
+  animation: projectileAnimateUp 1s ease-in-out;
 }
 
 /* up */
 @keyframes projectileAnimateDown {
-  from { transform: translateY(32px) }
-  to { transform: translateY(0px) }
+  0% { transform: translateY(32px); animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1); }
+  50% { transform: translateY(0px); animation-timing-function: cubic-bezier(0.1, 0.7, 0.9, 0.3); }
+  100% { transform: translateY(0px); animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1); }
 }
 .Projectile[data-direction="down"] .Projectile_sprite {
   background-position-x: 64px;
-  animation: projectileAnimateDown 0.3s;
+  animation: projectileAnimateDown 1s ease-in-out;
 
 }
 
