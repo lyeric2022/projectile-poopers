@@ -141,7 +141,7 @@ var mySound;
 
 
   //////
-  function shootProjectile(originalSpriteX, originalSpriteY, direction) {
+  function shootProjectile(originalSpriteX, originalSpriteY, direction, projectileDMG) {
     let { x, y } = getRandomSafeSpot();
 
     if (typeof originalSpriteX !== "undefined" && typeof originalSpriteY !== "undefined") {
@@ -167,7 +167,9 @@ var mySound;
       x,
       y,
       direction, // Set the direction in the Firebase database
+      dmg: projectileDMG,
       color: players[playerId].color,
+      owner: playerId,
     })
 
     const key = getKeyString(x, y);
@@ -205,7 +207,7 @@ var mySound;
 
       if (checkPlayerWinViaCoins()) {
         playerRef.update({
-          health: 999,
+          health: 20,
         })
       }
     }
@@ -219,21 +221,24 @@ var mySound;
   }
 
   function playerAndProjectileCollision(x, y) {
-    // console.log(x + "   " + y);
-    // console.log(players);
+
 
     const key = getKeyString(x, y);
     if (projectiles[key]) {
+      console.log(firebase.database().ref(`projectiles/${key}/owner`));
+
+      const dmg_value = projectiles[key].dmg;
+
       // Remove this key from data, then uptick Player's coin count
       firebase.database().ref(`projectiles/${key}`).remove();
+
       playerRef.update({
-        health: players[playerId].health - 1,
+        health: players[playerId].health - dmg_value,
       });
     }
   }
 
   function handleArrowPress(xChange = 0, yChange = 0) {
-    console.log(players);
 
     if (typeof players[playerId] !== 'undefined') {
       const newX = players[playerId].x + xChange;
@@ -254,12 +259,14 @@ var mySound;
           players[playerId].projectileDirection = "down";
         }
 
-        shootProjectile(players[playerId].x, players[playerId].y, players[playerId].projectileDirection);
+        shootProjectile(players[playerId].x, players[playerId].y, players[playerId].projectileDirection, players[playerId].projectileDMG);
 
-        players[playerId].x = newX;
-        players[playerId].y = newY;
-
-        playerRef.set(players[playerId]);
+        if (typeof players[playerId] !== 'undefined') {
+          players[playerId].x = newX;
+          players[playerId].y = newY;
+          playerRef.set(players[playerId]);
+        }
+        
         attemptGrabCoin(newX, newY);
       }
     }
@@ -312,8 +319,8 @@ var mySound;
         toggleMusicButton.textContent = "Music: OFF";
       }
     });
-    
-    
+
+
     // Add event listener for button-up
     const buttonUp = document.querySelector("#button-up");
     buttonUp.addEventListener("click", () => {
@@ -553,6 +560,7 @@ var mySound;
         name,
         direction: "right",
         projectileDirection: "",
+        projectileDMG: 1,
         color: randomFromArray(playerColors),
         x,
         y,
