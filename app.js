@@ -230,12 +230,15 @@ var mySound;
 
       console.log(dmg_value);
 
-      // Remove this key from data, then uptick Player's coin count
-      firebase.database().ref(`projectiles/${key}`).remove();
-
       playerRef.update({
         health: players[playerId].health - 1,
       });
+
+      // Remove this key from data, then uptick Player's coin count
+      setTimeout(() => {
+        firebase.database().ref(`projectiles/${key}`).remove();
+      }, 10);
+
     }
   }
 
@@ -267,7 +270,7 @@ var mySound;
           players[playerId].y = newY;
           playerRef.set(players[playerId]);
         }
-        
+
         attemptGrabCoin(newX, newY);
       }
     }
@@ -287,22 +290,22 @@ var mySound;
       { key: "KeyA", action: () => handleArrowPress(-1, 0) },
       { key: "KeyD", action: () => handleArrowPress(1, 0) }
     ];
-    
+
     for (const { key, action } of arrowKeys) {
       new KeyPressListener(key, action);
     }
-    
+
     function addButtonClickListener(buttonId, dx, dy) {
       const button = document.querySelector(buttonId);
       button.addEventListener("click", () => {
         handleArrowPress(dx, dy);
       });
     }
-    
+
     addButtonClickListener("#button-up", 0, -1);
     addButtonClickListener("#button-left", -1, 0);
     addButtonClickListener("#button-down", 0, 1);
-    addButtonClickListener("#button-right", 1, 0);    
+    addButtonClickListener("#button-right", 1, 0);
 
     const toggleDeviceButton = document.querySelector("#toggle-device");
     const gameContainer = document.querySelector(".game-container");
