@@ -207,14 +207,14 @@ var mySound;
 
       if (checkPlayerWinViaCoins()) {
         playerRef.update({
-          health: 20,
+          health: health + 5,
         })
       }
     }
   }
 
   function checkPlayerWinViaCoins() {
-    if (players[playerId].coins >= 100) {
+    if (players[playerId].coins >= 50) {
       return true;
     }
     else return false;
