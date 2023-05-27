@@ -143,11 +143,11 @@ var mySound;
     const playerRef = firebase.database().ref(`players/${playerId}`);
     playerRef.once("value", (snapshot) => {
       const player = snapshot.val();
-      console.log(player.coins);
+      // console.log(player.coins);
 
-      if (player.coins >= 3) {
+      if (player.coins >= 2) {
         playerRef.update({
-          coins: player.coins - 3,
+          coins: player.coins - 2,
           health: player.health + 1
         });
       } else {
@@ -156,10 +156,35 @@ var mySound;
         setTimeout(function() {
           document.querySelector("#buy-hp").classList.remove("shake");
         }, 1000);      }
-        console.log(player.coins);
+        // console.log(player.coins);
 
         if (player.coins < 3) {
           document.querySelector("#buy-hp").classList.add("disabled");
+        }
+    });
+  }
+
+  function exchangeCoinsForDMG() {
+    const playerRef = firebase.database().ref(`players/${playerId}`);
+    playerRef.once("value", (snapshot) => {
+      const player = snapshot.val();
+      // console.log(player.coins);
+
+      if (player.coins >= 25) {
+        playerRef.update({
+          coins: player.coins - 25,
+          projectileDMG: player.projectileDMG + 1,
+        });
+      } else {
+        document.querySelector("#upgrade-dmg").classList.add("shake");
+
+        setTimeout(function() {
+          document.querySelector("#upgrade-dmg").classList.remove("shake");
+        }, 1000);      }
+        // console.log(player.coins);
+
+        if (player.coins < 25) {
+          document.querySelector("#upgrade-dmg").classList.add("disabled1");
         }
     });
   }
@@ -194,6 +219,8 @@ var mySound;
       color: players[playerId].color,
       owner: playerId,
     })
+
+    // console.log(projectileRef);
 
     const key = getKeyString(x, y);
 
@@ -233,16 +260,20 @@ var mySound;
         document.querySelector("#buy-hp").classList.remove('disabled');
       }
 
+      if (players[playerId].coins >= 25) {
+        document.querySelector("#upgrade-dmg").classList.remove('disabled1');
+      }
+
       if (checkPlayerWinViaCoins()) {
         playerRef.update({
-          health: players[playerId].health + 2,
+          health: Math.max(players[playerId].health + 2, 99),
         })
       }
     }
   }
 
   function checkPlayerWinViaCoins() {
-    if (players[playerId].coins >= 25) {
+    if (players[playerId].coins >= 500) {
       return true;
     }
     else return false;
@@ -250,17 +281,28 @@ var mySound;
 
   function playerAndProjectileCollision(x, y) {
 
+    let ownerID;
+    firebase.database().ref(`projectiles/${getKeyString(x, y)}/owner`).once("value", (snapshot) => {
+      ownerID = snapshot.val();
+    });
 
     const key = getKeyString(x, y);
-    if (projectiles[key]) {
+    if (projectiles[key] && ownerID != playerId) {
 
-      const dmg_value = firebase.database().ref(`projectiles/${key}/dmg`);
+      let ownerProjectileDmg;
+      firebase.database().ref(`players/${ownerID}/projectileDMG`).once("value", (snapshot) => {
+        ownerProjectileDmg = snapshot.val();
+      });
 
-      console.log(dmg_value);
+      console.log(ownerProjectileDmg);
 
       playerRef.update({
-        health: players[playerId].health - 1,
+        health: players[playerId].health - ownerProjectileDmg,
       });
+
+      // firebase.database().ref(`players/${ownerID}`).update({
+      //   health: players[playerId].health + 1,
+      // });
 
       // Remove this key from data, then uptick Player's coin count
       setTimeout(() => {
@@ -271,7 +313,6 @@ var mySound;
   }
 
   function handleArrowPress(xChange = 0, yChange = 0) {
-
     if (typeof players[playerId] !== 'undefined') {
       const newX = players[playerId].x + xChange;
       const newY = players[playerId].y + yChange;
@@ -292,6 +333,8 @@ var mySound;
         }
 
         shootProjectile(players[playerId].x, players[playerId].y, players[playerId].projectileDirection, players[playerId].projectileDMG);
+
+        
 
         if (typeof players[playerId] !== 'undefined') {
           players[playerId].x = newX;
@@ -344,18 +387,26 @@ var mySound;
     toggleDeviceButton.addEventListener("click", () => {
       toggleDeviceButton.classList.toggle("clicked");
 
-      if (toggleDeviceButton.textContent === "Console: ON") {
+      if (toggleDeviceButton.textContent === "Console: V2") {
         gameContainer.style.display = "block";
         gameButtons.style.display = "none";
         toggleDeviceButton.textContent = "Console: OFF";
         gameContainer.style.transform = 'scale(3)';
 
-      } else {
-        // gameContainer.style.display = "none";
+      } else if (toggleDeviceButton.textContent != "Console: V1") {
         gameContainer.style.transform = 'scale(1.7)';
 
         gameButtons.style.display = "flex";
-        toggleDeviceButton.textContent = "Console: ON";
+        gameButtons.style.marginTop = "725px";
+
+        toggleDeviceButton.textContent = "Console: V1";
+
+      } else {
+        toggleDeviceButton.textContent = "Console: V2";
+        gameContainer.style.display = "none";
+        gameButtons.style.display = "flex";
+        gameButtons.style.marginTop = "300px";
+
       }
     });
 
@@ -564,6 +615,9 @@ var mySound;
     const shopButton = document.querySelector("#buy-hp");
     shopButton.addEventListener("click", exchangeCoinsForHP);
 
+    const upgradeDMG = document.querySelector("#upgrade-dmg");
+    upgradeDMG.addEventListener("click", exchangeCoinsForDMG);
+
     // Place my first coin
     placeCoin();
 
@@ -575,6 +629,7 @@ var mySound;
 
   firebase.auth().onAuthStateChanged((user) => {
     console.log(user);
+    // console.log(players);
 
     if (user) {
       // You're logged in!
@@ -592,7 +647,7 @@ var mySound;
         name,
         direction: "right",
         projectileDirection: "",
-        projectileDMG: 1,
+        projectileDMG: 2,
         color: randomFromArray(playerColors),
         x,
         y,

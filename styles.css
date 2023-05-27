@@ -44,7 +44,9 @@ html, body {
   padding: 1em;
   display: flex;
   gap: 0.5em;
-  align-items: flex-end
+  align-items: flex-end;
+  flex-direction: column;
+
 }
 
 
@@ -123,7 +125,7 @@ button:active {
 .Character_you-arrow {
   display: none;
   position: absolute;
-  top:-18px;
+  top:-19px;
   left: 5px;
   width: 7px;
   height: 5px;
@@ -266,8 +268,9 @@ button:active {
   display: none;
   flex-direction: column;
   align-items: center;
-  transform: scale(1.6);
-  margin-top: 710px;
+  transform: scale(1.7);
+  margin-top: 300px;
+
   /* margin-bottom: 100px; */
 
   position: absolute;
@@ -323,8 +326,12 @@ button:active {
   animation-iteration-count: 1;
 }
 
+.disabled1 {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-#buy-hp img {
-  background: url(/images/coin.png);
-  transform: scale(2);
+.disabled1:hover {
+  animation: shake 0.4s;
+  animation-iteration-count: 1;
 }
