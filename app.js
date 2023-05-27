@@ -139,8 +139,31 @@ var mySound;
   const playerColorButton = document.querySelector("#player-color");
   const playerRestartButton = document.querySelector("#restart-game");
 
+  function exchangeCoinsForHP() {
+    const playerRef = firebase.database().ref(`players/${playerId}`);
+    playerRef.once("value", (snapshot) => {
+      const player = snapshot.val();
+      console.log(player.coins);
 
-  //////
+      if (player.coins >= 3) {
+        playerRef.update({
+          coins: player.coins - 3,
+          health: player.health + 1
+        });
+      } else {
+        document.querySelector("#buy-hp").classList.add("shake");
+
+        setTimeout(function() {
+          document.querySelector("#buy-hp").classList.remove("shake");
+        }, 1000);      }
+        console.log(player.coins);
+
+        if (player.coins < 3) {
+          document.querySelector("#buy-hp").classList.add("disabled");
+        }
+    });
+  }
+
   function shootProjectile(originalSpriteX, originalSpriteY, direction, projectileDMG) {
     let { x, y } = getRandomSafeSpot();
 
@@ -174,7 +197,7 @@ var mySound;
 
     const key = getKeyString(x, y);
 
-    const projectileRefTimeout = 500;
+    const projectileRefTimeout = 550;
     setTimeout(() => {
       firebase.database().ref(`projectiles/${key}`).remove();
     }, projectileRefTimeout);
@@ -200,10 +223,15 @@ var mySound;
     if (coins[key]) {
       // Remove this key from data, then uptick Player's coin count
       firebase.database().ref(`coins/${key}`).remove();
+      myCoinSound.currentTime = 0;
       myCoinSound.play();
       playerRef.update({
         coins: players[playerId].coins + 1,
       })
+      
+      if (players[playerId].coins >= 3) {
+        document.querySelector("#buy-hp").classList.remove('disabled');
+      }
 
       if (checkPlayerWinViaCoins()) {
         playerRef.update({
@@ -529,6 +557,9 @@ var mySound;
       location.reload();
     });
 
+    const shopButton = document.querySelector("#buy-hp");
+    shopButton.addEventListener("click", exchangeCoinsForHP);
+
     // Place my first coin
     placeCoin();
 
@@ -536,6 +567,7 @@ var mySound;
     // shootProjectile();
 
   }
+
 
   firebase.auth().onAuthStateChanged((user) => {
     console.log(user);

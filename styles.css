@@ -7,6 +7,7 @@ html, body {
   padding: 0;
   height: 100%;
   background: linear-gradient(180deg, #64BEFF -50%, #6e96ff 69.71%, #2a65ff 150%);
+  /* background: darkkhaki; */
   font-family: 'Source Sans Pro', sans-serif;
   display: flex;
   align-items: center;
@@ -30,12 +31,26 @@ html, body {
   padding: 1em;
   display: flex;
   gap: 0.5em;
+  align-items: flex-end;
+  flex-wrap: wrap;
+
+}
+
+.market-info {
+  position: absolute;
+  top: 150px;
+  left:0;
+  padding: 1em;
+  display: flex;
+  gap: 0.5em;
   align-items: flex-end
 }
+
 
 label {
   display: block;
   font-weight: bold;
+  margin-bottom: 5px;
 }
 
 input[type="text"],
@@ -250,7 +265,9 @@ button:active {
   display: none;
   flex-direction: column;
   align-items: center;
-  transform: scale(1.8);
+  transform: scale(1.6);
+  margin-top: 190px;
+  position: absolute;
 
   /* width: 100px; */
 }
@@ -273,3 +290,39 @@ button:active {
   margin-left: 40px;
 }
 
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-3px);
+  }
+  40% {
+    transform: translateX(3px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.disabled:hover {
+  animation: shake 0.4s;
+  animation-iteration-count: 1;
+}
+
+
+#buy-hp img {
+  background: url(/images/coin.png);
+  transform: scale(2);
+}
