@@ -129,7 +129,7 @@ var mySound;
   let myMusic = new Audio("assets/game_music.mp3");
   let myCoinSound = new Audio("assets/coin_sound.mp3");
 
-  myMusic.volume = 0.1;
+  myMusic.volume = 0.05;
   myCoinSound.volume = 0.1;
 
   let musicIsPlaying = false;
@@ -344,12 +344,16 @@ var mySound;
     toggleDeviceButton.addEventListener("click", () => {
       toggleDeviceButton.classList.toggle("clicked");
 
-      if (gameContainer.style.display === "none") {
+      if (toggleDeviceButton.textContent === "Console: ON") {
         gameContainer.style.display = "block";
         gameButtons.style.display = "none";
         toggleDeviceButton.textContent = "Console: OFF";
+        gameContainer.style.transform = 'scale(3)';
+
       } else {
-        gameContainer.style.display = "none";
+        // gameContainer.style.display = "none";
+        gameContainer.style.transform = 'scale(1.7)';
+
         gameButtons.style.display = "flex";
         toggleDeviceButton.textContent = "Console: ON";
       }

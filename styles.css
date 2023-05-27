@@ -22,6 +22,7 @@ html, body {
   background: url('/images/map.png') no-repeat no-repeat;
   transform: scale(3);
   image-rendering: pixelated;
+  /* z-index: 10; */
 }
 
 .player-info {
@@ -266,9 +267,10 @@ button:active {
   flex-direction: column;
   align-items: center;
   transform: scale(1.6);
-  margin-top: 190px;
-  position: absolute;
+  margin-top: 710px;
+  /* margin-bottom: 100px; */
 
+  position: absolute;
   /* width: 100px; */
 }
 
