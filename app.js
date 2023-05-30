@@ -153,14 +153,15 @@ var mySound;
       } else {
         document.querySelector("#buy-hp").classList.add("shake");
 
-        setTimeout(function() {
+        setTimeout(function () {
           document.querySelector("#buy-hp").classList.remove("shake");
-        }, 1000);      }
-        // console.log(player.coins);
+        }, 1000);
+      }
+      // console.log(player.coins);
 
-        if (player.coins < 3) {
-          document.querySelector("#buy-hp").classList.add("disabled");
-        }
+      if (player.coins < 3) {
+        document.querySelector("#buy-hp").classList.add("disabled");
+      }
     });
   }
 
@@ -178,14 +179,15 @@ var mySound;
       } else {
         document.querySelector("#upgrade-dmg").classList.add("shake");
 
-        setTimeout(function() {
+        setTimeout(function () {
           document.querySelector("#upgrade-dmg").classList.remove("shake");
-        }, 1000);      }
-        // console.log(player.coins);
+        }, 1000);
+      }
+      // console.log(player.coins);
 
-        if (player.coins < 25) {
-          document.querySelector("#upgrade-dmg").classList.add("disabled1");
-        }
+      if (player.coins < 25) {
+        document.querySelector("#upgrade-dmg").classList.add("disabled1");
+      }
     });
   }
 
@@ -224,7 +226,7 @@ var mySound;
 
     const key = getKeyString(x, y);
 
-    const projectileRefTimeout = 550;
+    const projectileRefTimeout = 500;
     setTimeout(() => {
       firebase.database().ref(`projectiles/${key}`).remove();
     }, projectileRefTimeout);
@@ -255,7 +257,7 @@ var mySound;
       playerRef.update({
         coins: players[playerId].coins + 1,
       })
-      
+
       if (players[playerId].coins >= 3) {
         document.querySelector("#buy-hp").classList.remove('disabled');
       }
@@ -334,7 +336,7 @@ var mySound;
 
         shootProjectile(players[playerId].x, players[playerId].y, players[playerId].projectileDirection, players[playerId].projectileDMG);
 
-        
+
 
         if (typeof players[playerId] !== 'undefined') {
           players[playerId].x = newX;
@@ -542,6 +544,7 @@ var mySound;
       if (typeof currentPlayer !== "undefined") {
         playerAndProjectileCollision(currentPlayer.x, currentPlayer.y);
         if (currentPlayer.health <= 0) {
+          players[playerId].projectileDMG = 1;
           playerRef.remove();
           // Unhide the "restart-game" button
           const restartButton = document.getElementById("restart-game");
@@ -647,7 +650,7 @@ var mySound;
         name,
         direction: "right",
         projectileDirection: "",
-        projectileDMG: 2,
+        projectileDMG: 1,
         color: randomFromArray(playerColors),
         x,
         y,
